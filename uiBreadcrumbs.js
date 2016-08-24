@@ -26,7 +26,7 @@
         module = angular.module(moduleName, ['ui.router']);
     }
 
-    module.directive('uiBreadcrumbs', ['$interpolate', '$state', function($interpolate, $state) {
+    module.directive('uiBreadcrumbs', ['$interpolate', '$state', '$injector', function($interpolate, $state, $injector) {
             return {
                 restrict: 'E',
                 templateUrl: function(elem, attrs) {
@@ -90,6 +90,15 @@
                                     workingState = angular.copy($state.get(proxyStateName));
                                     if (workingState) {
                                         workingState.locals = currentState.locals;
+                                    }else{
+                                        if($injector.has("$futureState")){
+                                            var $futureState = $injector.get("$futureState");
+                                            var futureState = angular.copy($futureState.get(proxyStateName));
+                                            workingState = futureState[proxyStateName];
+                                            if(workingState){
+                                                workingState.locals = currentState.locals;
+                                            }
+                                        }
                                     }
                                 } else {
                                     workingState = false;
